@@ -7,37 +7,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
-      - name: Install pmbootstrap
-        run: |
+          python-version: "3.x"
+      - run: |
           sudo apt update
           sudo apt install -y python3-pip git openssl android-sdk-libsparse-utils
           pip3 install --break-system-packages git+https://gitlab.postmarketos.org/postmarketOS/pmbootstrap.git
-      - name: Initialize pmbootstrap for Vince
-        run: |
-          pmbootstrap init \
-            --work /tmp/pmbootstrap \
-            --aports-channel edge \
-            --vendor xiaomi \
-            --device vince \
-            --ui none \
-            --non-interactive
-      - name: Build RootFS & Kernel
-        run: |
-          pmbootstrap --work /tmp/pmbootstrap install \
-            --extra-packages docker,openssh,networkmanager,iptables \
-            --no-fde
-      - name: Export Image Artifacts
-        run: |
+      - run: |
+          pmbootstrap -w /tmp/pmbootstrap init --aports-channel edge --vendor xiaomi --device vince --ui none --non-interactive
+      - run: |
+          pmbootstrap -w /tmp/pmbootstrap install --extra-packages docker,openssh,networkmanager,iptables --no-fde
+      - run: |
           mkdir -p output
-          pmbootstrap --work /tmp/pmbootstrap export ./output
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+          pmbootstrap -w /tmp/pmbootstrap export ./output
+      - uses: actions/upload-artifact@v4
         with:
           name: vince-pmos-headless-build
           path: output/*
