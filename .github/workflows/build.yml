@@ -17,7 +17,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y python3-pip git openssl android-sdk-libsparse-utils
-          pip3 install pmbootstrap
+          pip3 install --break-system-packages pmbootstrap
       - name: Initialize pmbootstrap for Vince
         run: |
           pmbootstrap init \
